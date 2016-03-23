@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/wcandillon/courrier#readme",
   "dependencies": {
+    "colors": "^1.1.2",
     "lodash": "^4.6.1",
-    "q": "^1.4.1",
     "request": "^2.69.0",
     "xml-writer": "^1.6.0"
   },

@@ -1,5 +1,8 @@
 # mailman
-Postman/Newman runner that can run requests in parallel
+
+Postman/Newman runner that runs requests in parallel.
+
+[![Circle CI](https://circleci.com/gh/wcandillon/courrier/tree/master.svg?style=svg)](https://circleci.com/gh/wcandillon/courrier/tree/master)
 
 ## Usage
 
