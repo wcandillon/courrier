@@ -1,4 +1,4 @@
-# mailman
+# Courrier
 
 Postman/Newman runner that runs requests in parallel.
 
