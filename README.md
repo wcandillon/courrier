@@ -28,5 +28,6 @@ const options = {
 };
 courrier.execute(JSON.parse(fs.readFileSync('/path/to/postman/collection.json', 'utf-8')), options)
     .then(() => console.log('All tests passed'))
-    .catch(() => console.log('Some tests failed'));
+    .catch(() => console.log('Some tests failed'))
+;
 ```
