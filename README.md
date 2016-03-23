@@ -27,10 +27,6 @@ const options = {
     requestTimeout: 300000
 };
 courrier.execute(JSON.parse(fs.readFileSync('/path/to/postman/collection.json', 'utf-8')), options)
-    .then(() => {
-        console.log('All tests passed');
-    })
-    .catch(() => {
-        console.log('Some tests failed');
-    });
+    .then(() => console.log('All tests passed'))
+    .catch(() => console.log('Some tests failed'));
 ```
