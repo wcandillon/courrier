@@ -2,7 +2,7 @@
 
 Postman/Newman runner that runs requests in parallel.
 
-[![Circle CI](https://circleci.com/gh/wcandillon/courrier/tree/master.svg?style=svg)](https://circleci.com/gh/wcandillon/courrier/tree/master)
+[![Circle CI](https://circleci.com/gh/wcandillon/courrier/tree/master.svg?style=svg)](https://circleci.com/gh/wcandillon/courrier/tree/master) [![NPM version](http://img.shields.io/npm/v/courrier.svg?style=flat)](http://badge.fury.io/js/courrier)
 
 ## Usage
 
