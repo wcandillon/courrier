@@ -38,7 +38,7 @@ exports.execute = (collection, options) => {
     xw.startDocument();
     xw.startElement('testsuites');
     let promises = collection.requests.map(req => {
-        return new Promise((reject, resolve) => {
+        return new Promise((resolve, reject) => {
             let url = req.url;
             options.envJson.values.forEach(value => {
                 url = url.replace(new RegExp(`{{${value.key}}}`, 'g'), value.value);
@@ -115,8 +115,8 @@ exports.execute = (collection, options) => {
         fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
         console.log(colors.yellow(`Wrote ${options.testReportFile}`));
     };
-    return Promise.all(promises).then(final).catch(() => {
+    return Promise.all(promises).then(final).catch(error => {
         final();
-        throw new Error('Some test failed');
+        throw error;
     });
 };
