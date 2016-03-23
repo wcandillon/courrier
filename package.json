@@ -1,5 +1,5 @@
 {
-  "name": "mailman",
+  "name": "courrier",
   "version": "0.0.1",
   "description": "Postman runner that can run requests in parallel",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wcandillon/mailman.git"
+    "url": "git+https://github.com/wcandillon/courrier.git"
   },
   "keywords": [
     "postman",
@@ -18,9 +18,9 @@
   "author": "William Candillon <w@28.io>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/wcandillon/mailman/issues"
+    "url": "https://github.com/wcandillon/courrier/issues"
   },
-  "homepage": "https://github.com/wcandillon/mailman#readme",
+  "homepage": "https://github.com/wcandillon/courrier#readme",
   "dependencies": {
     "lodash": "^4.6.1",
     "q": "^1.4.1",
