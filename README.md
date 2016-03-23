@@ -4,7 +4,9 @@ Postman/Newman runner that can run requests in parallel
 ## Usage
 
 ```js
-let options = {
+const courrier = require('courrier');
+
+const options = {
     envJson: {
         id:'7a04c166-1f65-509b-0d3d-7463182e17c9',
         name:'CellStore',
@@ -21,7 +23,7 @@ let options = {
     responseHandler: 'TestResponseHandler',
     requestTimeout: 300000
 };
-NewmanExecute(JSON.parse(fs.readFileSync('/path/to/postman/collection.json', 'utf-8')), options, function(failed) {
+courrier.execute(JSON.parse(fs.readFileSync('/path/to/postman/collection.json', 'utf-8')), options, function(failed) {
     if(failed) {
         console.log('Some tests failed');
     }
