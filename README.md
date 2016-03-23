@@ -1,8 +1,8 @@
-# mailman
+# Courrier
 
 Postman/Newman runner that runs requests in parallel.
 
-[![Circle CI](https://circleci.com/gh/wcandillon/courrier/tree/master.svg?style=svg)](https://circleci.com/gh/wcandillon/courrier/tree/master)
+[![Circle CI](https://circleci.com/gh/wcandillon/courrier/tree/master.svg?style=svg)](https://circleci.com/gh/wcandillon/courrier/tree/master) [![NPM version](http://img.shields.io/npm/v/courrier.svg?style=flat)](http://badge.fury.io/js/courrier)
 
 ## Usage
 
@@ -26,9 +26,11 @@ const options = {
     responseHandler: 'TestResponseHandler',
     requestTimeout: 300000
 };
-courrier.execute(JSON.parse(fs.readFileSync('/path/to/postman/collection.json', 'utf-8')), options, function(failed) {
-    if(failed) {
+courrier.execute(JSON.parse(fs.readFileSync('/path/to/postman/collection.json', 'utf-8')), options)
+    .then(() => {
+        console.log('All tests passed');
+    })
+    .catch(() => {
         console.log('Some tests failed');
-    }
-});
+    });
 ```
