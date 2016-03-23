@@ -26,9 +26,11 @@ const options = {
     responseHandler: 'TestResponseHandler',
     requestTimeout: 300000
 };
-courrier.execute(JSON.parse(fs.readFileSync('/path/to/postman/collection.json', 'utf-8')), options, function(failed) {
-    if(failed) {
+courrier.execute(JSON.parse(fs.readFileSync('/path/to/postman/collection.json', 'utf-8')), options)
+    .then(() => {
+        console.log('All tests passed');
+    })
+    .catch(() => {
         console.log('Some tests failed');
-    }
-});
+    });
 ```
