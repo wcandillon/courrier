@@ -118,7 +118,7 @@ exports.NewmanExecute = (collection, options, callback) => {
         .finally(() => {
             xw.endDocument();
             fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
-            console.log(colors.cyan(`Wrote ${options.testReportFile}`));
+            console.log(colors.yellow(`Wrote ${options.testReportFile}`));
             callback(failed);
         });
 };
