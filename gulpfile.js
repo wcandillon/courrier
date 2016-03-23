@@ -1,6 +1,9 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
+
+const mkdirp = require('mkdirp');
 
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
@@ -31,23 +34,19 @@ gulp.task('lint:jsonlint', () => {
 });
 
 gulp.task('tests', () => {
+    mkdirp.sync(testReports);
     const options = {
         envJson: {
             id:'7a04c166-1f65-509b-0d3d-7463182e17c9',
             name:'CellStore',
             values: [{
                 key: 'endpoint',
-                value: Config['28'].projectEndpoint,
+                value: 'http://secxbrl.28.io/v1',
                 type:'text',
                 enabled: true
             }, {
                 key: 'token',
-                value: Config.cellstore.testToken,
-                type: 'text',
-                enabled: true
-            }, {
-                key: 'adminToken',
-                value: Config.cellstore.adminToken,
+                value: 'c3049752-4d35-43da-82a2-f89f1b06f7a4',
                 type: 'text',
                 enabled: true
             }],
@@ -61,7 +60,7 @@ gulp.task('tests', () => {
     const collections = ['collections/documentation-examples.json'];
     let promises = [];
     collections.forEach(collection => {
-        options.testReportFile = `${testReports}/${path.basename(collection)}.json`;
+        options.testReportFile = `${testReports}/${path.basename(collection)}.xml`;
         promises.push(courrier.execute(JSON.parse(fs.readFileSync(collection)), options));
     });
     return Promise.all(promises);

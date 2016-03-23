@@ -2,7 +2,6 @@
 
 var fs = require('fs');
 var _ = require('lodash');
-var Q = require('q');
 
 var request = require('request');
 
@@ -111,10 +110,13 @@ exports.execute = (collection, options) => {
             });
         });
     });
-    return Promise.all(promises)
-        .finally(() => {
-            xw.endDocument();
-            fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
-            console.log(colors.yellow(`Wrote ${options.testReportFile}`));
-        });
+    let final = () => {
+        xw.endDocument();
+        fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
+        console.log(colors.yellow(`Wrote ${options.testReportFile}`));
+    };
+    return Promise.all(promises).then(final).catch(() => {
+        final();
+        throw new Error('Some test failed');
+    });
 };
