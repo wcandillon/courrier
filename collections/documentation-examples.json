@@ -1212,7 +1212,7 @@
             "data": [],
             "dataMode": "params",
             "version": 2,
-            "tests": "tests[\"Status code is 200\"] = responseCode.code === 200;",
+            "tests": "tests[\"Status code is 200\"] = responseCode.code === 201;",
             "currentHelper": "normal",
             "helperAttributes": {},
             "time": 1456080312446,
