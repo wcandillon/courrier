@@ -1,5 +1,5 @@
 # mailman
-Postman runner that can run requests in parallel
+Postman/Newman runner that can run requests in parallel
 
 ## Usage
 
