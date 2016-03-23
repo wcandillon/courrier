@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/wcandillon/courrier#readme",
   "dependencies": {
+    "colors": "^1.1.2",
     "lodash": "^4.6.1",
-    "q": "^1.4.1",
     "request": "^2.69.0",
     "xml-writer": "^1.6.0"
   },
@@ -34,6 +34,8 @@
     "gulp-load-plugins": "^1.2.0",
     "gulp-util": "^3.0.7",
     "jshint": "^2.9.1",
-    "jshint-stylish": "^2.1.0"
+    "jshint-stylish": "^2.1.0",
+    "map-stream": "0.0.6",
+    "mkdirp": "^0.5.1"
   }
 }
