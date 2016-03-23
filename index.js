@@ -34,7 +34,7 @@ var runTests = (response, tests) => {
     return sandbox.tests;
 };
 
-exports.NewmanExecute = (collection, options, callback) => {
+exports.execute = (collection, options, callback) => {
     let xw = new XMLWriter(true);
     xw.startDocument();
     xw.startElement('testsuites');

@@ -1,6 +1,6 @@
 {
   "name": "courrier",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Postman runner that can run requests in parallel",
   "main": "index.js",
   "scripts": {
