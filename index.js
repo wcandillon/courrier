@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 var _ = require('lodash');
-
+var Q = require('q');
 var request = require('request');
 
 const vm = require('vm');
@@ -110,13 +110,10 @@ exports.execute = (collection, options) => {
             });
         });
     });
-    let final = () => {
-        xw.endDocument();
-        fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
-        console.log(colors.yellow(`Wrote ${options.testReportFile}`));
-    };
-    return Promise.all(promises).then(final).catch(error => {
-        final();
-        throw error;
+
+    return Q.allSettled(promises).finally(() => {
+            xw.endDocument();
+            fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
+            console.log(colors.yellow(`Wrote ${options.testReportFile}`));
     });
 };
