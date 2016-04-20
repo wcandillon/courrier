@@ -3,7 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 
+const _ = require('lodash');
 const mkdirp = require('mkdirp');
+const Q = require('q');
 
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
@@ -63,7 +65,11 @@ gulp.task('tests', () => {
         options.testReportFile = `${testReports}/${path.basename(collection)}.xml`;
         promises.push(courrier.execute(JSON.parse(fs.readFileSync(collection)), options));
     });
-    return Promise.all(promises);
+    return Q.allSettled(promises).then(promises => {
+        if(_.find(promises, promise => promise.state === 'rejected')) {
+            throw new Error('Test Failed');
+        }
+    });
 });
 
 gulp.task('default', ['lint:jslint', 'lint:jsonlint', 'tests']);
