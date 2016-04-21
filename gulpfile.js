@@ -67,7 +67,7 @@ gulp.task('tests', () => {
     });
     return Q.allSettled(promises).then(promises => {
         if(_.find(promises, promise => promise.state === 'rejected')) {
-            throw new Error('Test Failed');
+            throw new Error('Test suite Failed');
         }
     });
 });
