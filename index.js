@@ -113,7 +113,7 @@ exports.execute = (collection, options) => {
     return Q.allSettled(promises).then(promises => {
         xw.endDocument();
         fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
-        console.log(colors.yellow(`Wrote ${options.testReportFile}`));
+        console.log(colors.gray(`Wrote ${options.testReportFile}`));
         if(_.find(promises, promise => promise.state === 'rejected')) {
             throw new Error('Test Failed');
         }
