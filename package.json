@@ -1,14 +1,14 @@
 {
   "name": "courrier",
-  "version": "0.0.7",
   "description": "Postman runner that can run requests in parallel",
   "main": "index.js",
   "scripts": {
-    "test": "gulp"
+    "test": "gulp",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wcandillon/courrier.git"
+    "url": "https://github.com/wcandillon/courrier.git"
   },
   "keywords": [
     "postman",
@@ -34,9 +34,13 @@
     "gulp-jsonlint": "^1.1.2",
     "gulp-load-plugins": "^1.2.0",
     "gulp-util": "^3.0.7",
+    "is-my-json-valid": "^2.13.1",
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.1.0",
+    "json-refs": "^2.1.5",
     "map-stream": "0.0.6",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "semantic-release": "^4.3.5",
+    "swagger-js-codegen": "^1.5.1"
   }
 }

@@ -1,0 +1,31 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Postman API"
+  },
+  "host": "api.getpostman.com",
+  "basePath": "",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/collections": {
+      "get": {
+        "parameters": [
+          { "$ref": "#/parameters/api-key" }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "api-key": {
+      "name": "x-api-key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+    }
+  }
+}
