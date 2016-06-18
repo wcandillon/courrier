@@ -1,10 +1,17 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Postman API"
+    "title": "Postman API",
+    "description": "Postman cloud API",
+    "contact": {
+      "name": "API Support/Feedback",
+      "url": "http://www.28.io/",
+      "email": "support@28.io"
+    },
+    "version": "1.0"
   },
   "host": "api.getpostman.com",
-  "basePath": "",
+  "basePath": "/",
   "schemes": [
     "https"
   ],
@@ -14,9 +21,16 @@
   "paths": {
     "/collections": {
       "get": {
+        "summary": "List collections",
+        "operationId": "getCollections",
         "parameters": [
           { "$ref": "#/parameters/api-key" }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "List of collections"
+          }
+        }
       }
     }
   },

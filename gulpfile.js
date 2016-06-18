@@ -22,11 +22,11 @@ const testReports = process.env.CIRCLE_TEST_REPORTS !== undefined ? process.env.
 
 gulp.task('swagger', () => {
     var index = JSON.parse(fs.readFileSync('swagger/postman_api.json', 'utf-8'));
-    return resolve(index, {}).then(function(resolved){
-        var api = JSON.stringify(resolved, null, 2);
-        fs.writeFileSync('swagger/swagger-aggregated.json', api);
+    //return resolve(index, {}).then(function(resolved){
+        //var api = JSON.stringify(index, null, 2);
+        //fs.writeFileSync('swagger/swagger-aggregated.json', api);
         var apis = [{
-            swagger: 'swagger/swagger-aggregated.json',
+            swagger: 'swagger/postman_api.json',
             moduleName: 'postman-api',
             className: 'PostmanAPI'
         }];
@@ -34,16 +34,16 @@ gulp.task('swagger', () => {
         var dest = 'lib';
         apis.forEach(function(api){
             var swagger = JSON.parse(fs.readFileSync(api.swagger, 'utf-8'));
-            var source = CodeGen.getAngularCode({ moduleName: api.moduleName, className: api.className, swagger: swagger });
+            var source = CodeGen.getNodeCode({ moduleName: api.moduleName, className: api.className, swagger: swagger });
             $.util.log('Generated ' + api.moduleName + '.js from ' + api.swagger);
             fs.writeFileSync(dest + '/' + api.moduleName + '.js', source, 'UTF-8');
         });
-    });
+    //});
 });
 
 gulp.task('lint:swagger', () => {
     var validate = validator(fs.readFileSync('swagger/swagger.jsonschema', 'utf-8'));
-    return gulp.src('swagger/swagger-aggregated.json').pipe(map((file, cb) => {
+    return gulp.src('swagger/postman_api.json').pipe(map((file, cb) => {
         var api = JSON.parse(file.contents.toString());
         validate(api);
         if(validate.errors && validate.errors.length > 0) {
@@ -113,4 +113,4 @@ gulp.task('tests', () => {
     });
 });
 
-gulp.task('default', 'swagger', ['lint:swagger', 'lint:jslint', 'lint:jsonlint', 'tests']);
+gulp.task('default', ['swagger', 'lint:swagger', 'lint:jslint', 'lint:jsonlint', 'tests']);
