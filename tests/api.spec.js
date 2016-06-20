@@ -8,8 +8,8 @@ describe("Postman API", function () {
 
     beforeEach(() => api = new PostmanAPI());
 
-    it("Use API", done => api.getCollections({ xApiKey: key }).then(resp => {
-        expect(resp.body.length).toBeGreaterThan(0);
+    it("tests getCollections()", done => api.getCollections({ apikey: key }).then(resp => {
+        expect(resp.body.collections.length).toBeGreaterThan(0);
         done();
     }));
 });

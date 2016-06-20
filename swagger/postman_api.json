@@ -36,8 +36,8 @@
   },
   "parameters": {
     "api-key": {
-      "name": "x-api-key",
-      "in": "header",
+      "name": "apikey",
+      "in": "query",
       "required": true,
       "type": "string"
     }
