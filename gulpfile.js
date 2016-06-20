@@ -76,7 +76,14 @@ gulp.task('lint:jsonlint', () => {
         }));
 });
 
-gulp.task('tests', () => {
+gulp.task('tests', ['rest:tests', 'unit:tests']);
+
+gulp.task('unit:tests', () => {
+    return gulp.src('tests/*.js')
+        .pipe($.jasmine());
+});
+
+gulp.task('rest:tests', () => {
     mkdirp.sync(testReports);
     const options = {
         envJson: {
