@@ -12,33 +12,29 @@ const $ = require('gulp-load-plugins')();
 const map = require('map-stream');
 const stylish = require('jshint-stylish');
 
-const resolve = require('json-refs').resolveRefs;
 const CodeGen = require('swagger-js-codegen').CodeGen;
 const validator = require('is-my-json-valid');
 
 const courrier = require('./index');
 
+const runSequence = require('run-sequence');
+
 const testReports = process.env.CIRCLE_TEST_REPORTS !== undefined ? process.env.CIRCLE_TEST_REPORTS : 'test-reports';
 
 gulp.task('swagger', () => {
-    var index = JSON.parse(fs.readFileSync('swagger/postman_api.json', 'utf-8'));
-    //return resolve(index, {}).then(function(resolved){
-        //var api = JSON.stringify(index, null, 2);
-        //fs.writeFileSync('swagger/swagger-aggregated.json', api);
-        var apis = [{
-            swagger: 'swagger/postman_api.json',
-            moduleName: 'postman-api',
-            className: 'PostmanAPI'
-        }];
-        //JavaScript Bindings
-        var dest = 'lib';
-        apis.forEach(function(api){
-            var swagger = JSON.parse(fs.readFileSync(api.swagger, 'utf-8'));
-            var source = CodeGen.getNodeCode({ moduleName: api.moduleName, className: api.className, swagger: swagger });
-            $.util.log('Generated ' + api.moduleName + '.js from ' + api.swagger);
-            fs.writeFileSync(dest + '/' + api.moduleName + '.js', source, 'UTF-8');
-        });
-    //});
+    var apis = [{
+        swagger: 'swagger/postman_api.json',
+        moduleName: 'postman-api',
+        className: 'PostmanAPI'
+    }];
+    //JavaScript Bindings
+    var dest = 'lib';
+    apis.forEach(function(api){
+        var swagger = JSON.parse(fs.readFileSync(api.swagger, 'utf-8'));
+        var source = CodeGen.getNodeCode({ moduleName: api.moduleName, className: api.className, swagger: swagger });
+        $.util.log('Generated ' + api.moduleName + '.js from ' + api.swagger);
+        fs.writeFileSync(dest + '/' + api.moduleName + '.js', source, 'UTF-8');
+    });
 });
 
 gulp.task('lint:swagger', () => {
@@ -120,4 +116,6 @@ gulp.task('rest:tests', () => {
     });
 });
 
-gulp.task('default', ['swagger', 'lint:swagger', 'lint:jslint', 'lint:jsonlint', 'tests']);
+gulp.task('default', ['swagger', 'lint:swagger', 'lint:jslint', 'lint:jsonlint'], done => {
+    runSequence('tests', done);
+});
