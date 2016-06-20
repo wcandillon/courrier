@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "$(npm bin)/gulp",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
