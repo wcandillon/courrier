@@ -11,9 +11,46 @@ const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const map = require('map-stream');
 const stylish = require('jshint-stylish');
+
+const CodeGen = require('swagger-js-codegen').CodeGen;
+const validator = require('is-my-json-valid');
+
 const courrier = require('./index');
 
+const runSequence = require('run-sequence');
+
 const testReports = process.env.CIRCLE_TEST_REPORTS !== undefined ? process.env.CIRCLE_TEST_REPORTS : 'test-reports';
+
+gulp.task('swagger', () => {
+    var apis = [{
+        swagger: 'swagger/postman_api.json',
+        moduleName: 'postman-api',
+        className: 'PostmanAPI'
+    }];
+    //JavaScript Bindings
+    var dest = 'lib';
+    apis.forEach(function(api){
+        var swagger = JSON.parse(fs.readFileSync(api.swagger, 'utf-8'));
+        var source = CodeGen.getNodeCode({ moduleName: api.moduleName, className: api.className, swagger: swagger });
+        $.util.log('Generated ' + api.moduleName + '.js from ' + api.swagger);
+        fs.writeFileSync(dest + '/' + api.moduleName + '.js', source, 'UTF-8');
+    });
+});
+
+gulp.task('lint:swagger', () => {
+    var validate = validator(fs.readFileSync('swagger/swagger.jsonschema', 'utf-8'));
+    return gulp.src('swagger/postman_api.json').pipe(map((file, cb) => {
+        var api = JSON.parse(file.contents.toString());
+        validate(api);
+        if(validate.errors && validate.errors.length > 0) {
+            var errors = JSON.stringify({ collection: file.path, errors: validate.errors }, null, 2);
+            $.util.log($.util.colors.red(errors));
+            cb(new Error('Invalid swagger file: ' + file.path), file);
+        } else {
+            cb(null, file);
+        }
+    }));
+});
 
 gulp.task('lint:jslint', () => {
     return gulp.src('index.js')
@@ -35,7 +72,14 @@ gulp.task('lint:jsonlint', () => {
         }));
 });
 
-gulp.task('tests', () => {
+gulp.task('tests', ['rest:tests', 'unit:tests']);
+
+gulp.task('unit:tests', () => {
+    return gulp.src('tests/*.js')
+        .pipe($.jasmine());
+});
+
+gulp.task('rest:tests', () => {
     mkdirp.sync(testReports);
     const options = {
         envJson: {
@@ -72,4 +116,6 @@ gulp.task('tests', () => {
     });
 });
 
-gulp.task('default', ['lint:jslint', 'lint:jsonlint', 'tests']);
+gulp.task('default', ['swagger', 'lint:swagger', 'lint:jslint', 'lint:jsonlint'], done => {
+    runSequence('tests', done);
+});
