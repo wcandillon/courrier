@@ -29,6 +29,7 @@
     "xml-writer": "^1.6.0"
   },
   "devDependencies": {
+    "condition-circle": "^1.2.0",
     "gulp": "^3.9.1",
     "gulp-jasmine": "^2.3.0",
     "gulp-jshint": "^2.0.0",
