@@ -8,7 +8,6 @@ var request = require('request');
 const vm = require('vm');
 var XMLWriter = require('xml-writer');
 var colors = require('colors/safe');
-
 var printStatusCode = status => {
     if(status >= 200 && status <= 300) {
         return colors.green(status);
