@@ -3,7 +3,6 @@ machine:
     version: 5.7.0
 dependencies:
   pre:
-    - echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL"
     - echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
 deployment:
   production:
