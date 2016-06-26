@@ -12,7 +12,7 @@ module.exports = function (pluginConfig, config, callback) {
     }, function(err, resp, body){
         var releases = JSON.parse(body);
         /*jshint camelcase: false */
-        var tag = !err ? releases[0].tag_name : undefined;
+        var tag = (!err && releases.length > 0) ? releases[0].tag_name : undefined;
         callback(err, {
             version: tag,
             gitHead: tag,

@@ -98,29 +98,6 @@
 				"description": ""
 			},
 			"response": []
-		},
-		{
-			"name": "You can retrieve all entities with the tag ALL",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": "tests[\"Status code is 200\"] = responseCode.code === 200;"
-					}
-				}
-			],
-			"request": {
-				"url": "{{endpoint}}/_queries/public/api/entities?tag=ALL&format=html&token={{token}}",
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": []
-				},
-				"description": ""
-			},
-			"response": []
 		}
 	]
 }
