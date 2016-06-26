@@ -8,7 +8,6 @@ var request = require('request');
 const vm = require('vm');
 var XMLWriter = require('xml-writer');
 var colors = require('colors/safe');
-
 var printStatusCode = status => {
     if(status >= 200 && status <= 300) {
         return colors.green(status);
@@ -28,8 +27,10 @@ var runTests = (response, tests) => {
             }
     };
     let context = new vm.createContext(sandbox);
-    let script = new vm.Script(tests);
-    script.runInContext(context);
+    tests.forEach(test => {
+        let script = new vm.Script(test.script.exec);
+        script.runInContext(context);
+    });
     return sandbox.tests;
 };
 
@@ -37,7 +38,8 @@ exports.execute = (collection, options) => {
     let xw = new XMLWriter(true);
     xw.startDocument();
     xw.startElement('testsuites');
-    let promises = collection.requests.map(req => {
+    let promises = collection.item.map(item => {
+        let req = item.request;
         let defered = Q.defer();
         let url = req.url;
         options.envJson.values.forEach(value => {
@@ -53,8 +55,8 @@ exports.execute = (collection, options) => {
                 console.log(colors.red(error));
                 defered.reject(error);
             } else {
-                console.log(`${printStatusCode(response.statusCode)} ${req.name} ${colors.cyan(`[${req.method}]`)} ${url}`);
-                let results = runTests(response, req.tests);
+                console.log(`${printStatusCode(response.statusCode)} ${item.name} ${colors.cyan(`[${req.method}]`)} ${url}`);
+                let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'));
                 let tests = 0;
                 let failures = 0;
                 let cases = [];

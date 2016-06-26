@@ -1,108 +1,126 @@
 {
-	"id": "tests/rest/secxbrl/documentation-examples.json",
-	"name": "secxbrl-documentation-examples",
-	"description": "",
-	"folders": [],
-	"timestamp": 1456078271105,
-	"owner": "50",
-	"remoteLink": "",
-	"public": false,
-	"requests": [
+	"variables": [],
+	"info": {
+		"name": "secxbrl-documentation-examples copy",
+		"_postman_id": "1f088769-eda7-ed02-a43d-816ac4bbcdf4",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
 		{
-			"id": "format-html",
-			"headers": "",
-			"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=html&token={{token}}&format-indent=yes",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "tests['Content-Type is HTML'] = postman.getResponseHeader('Content-Type').indexOf('html') !== -1;\n",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1456080289609,
 			"name": "List filing as HTML",
-			"description": "",
-			"collectionId": "tests/rest/secxbrl/documentation-examples.json",
-			"responses": []
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "tests['Content-Type is HTML'] = postman.getResponseHeader('Content-Type').indexOf('html') !== -1;\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=html&token={{token}}&format-indent=yes",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
 		},
 		{
-			"id": "format-csv",
-			"headers": "",
-			"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=csv&token={{token}}&format-indent=yes",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "tests['Content-Type is CSV'] = postman.getResponseHeader('Content-Type').indexOf('csv') !== -1;\n",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1456080297968,
 			"name": "List filing as CSV",
-			"description": "",
-			"collectionId": "tests/rest/secxbrl/documentation-examples.json",
-			"responses": []
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "tests['Content-Type is CSV'] = postman.getResponseHeader('Content-Type').indexOf('csv') !== -1;\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=csv&token={{token}}&format-indent=yes",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
 		},
 		{
-			"id": "format-xml",
-			"headers": "",
-			"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=xml&token={{token}}&format-indent=yes",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "tests['Content-Type is XML'] = postman.getResponseHeader('Content-Type').indexOf('xml') !== -1;\n",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1456080305459,
 			"name": "List filing as XML",
-			"description": "",
-			"collectionId": "tests/rest/secxbrl/documentation-examples.json",
-			"responses": []
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "tests['Content-Type is XML'] = postman.getResponseHeader('Content-Type').indexOf('xml') !== -1;\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=xml&token={{token}}&format-indent=yes",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
 		},
 		{
-			"id": "format-json",
-			"headers": "",
-			"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&token={{token}}&format-indent=yes",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "tests['Content-Type is JSON'] = postman.getResponseHeader('Content-Type').indexOf('json') !== -1;\n",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1456080312446,
 			"name": "List filing as JSON",
-			"description": "",
-			"collectionId": "tests/rest/secxbrl/documentation-examples.json",
-			"responses": []
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "tests['Content-Type is JSON'] = postman.getResponseHeader('Content-Type').indexOf('json') !== -1;\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&token={{token}}&format-indent=yes",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
 		},
-        {
-            "id": "all-entities",
-            "headers": "",
-            "url": "{{endpoint}}/_queries/public/api/entities?tag=ALL&format=html&token={{token}}",
-            "preRequestScript": "",
-            "pathVariables": {},
-            "method": "GET",
-            "data": [],
-            "dataMode": "params",
-            "version": 2,
-            "tests": "tests[\"Status code is 200\"] = responseCode.code === 200;",
-            "currentHelper": "normal",
-            "helperAttributes": {},
-            "time": 1456080312446,
-            "name": "You can retrieve all entities with the tag ALL",
-            "description": "",
-            "collectionId": "tests/rest/secxbrl/documentation-examples.json",
-            "responses": []
-
-        }
-    ]
+		{
+			"name": "You can retrieve all entities with the tag ALL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "tests[\"Status code is 200\"] = responseCode.code === 200;"
+					}
+				}
+			],
+			"request": {
+				"url": "{{endpoint}}/_queries/public/api/entities?tag=ALL&format=html&token={{token}}",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
 }

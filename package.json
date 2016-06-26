@@ -45,5 +45,9 @@
     "run-sequence": "^1.2.1",
     "semantic-release": "^4.3.5",
     "swagger-js-codegen": "^1.5.1"
+  },
+  "release": {
+    "verifyConditions": "condition-circle",
+    "getLastRelease": "./tasks/get-last-release.js"
   }
 }
