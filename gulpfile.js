@@ -72,6 +72,22 @@ gulp.task('lint:jsonlint', () => {
         }));
 });
 
+gulp.task('lint:collections', () => {
+    var validator = require('is-my-json-valid');
+    var validate = validator(fs.readFileSync('collections/collection.jsonschema', 'utf-8'));
+    return gulp.src('tests/rest/**/*.json').pipe(map((file, cb) => {
+        validate(JSON.parse(file.contents.toString()));
+        if(validate.errors && validate.errors.length > 0) {
+            var errors = JSON.stringify({ collection: file.path, errors: validate.errors }, null, 2);
+            $.util.log($.util.colors.red(errors));
+            cb(new Error('Invalid postman collection: ' + file.path), file);
+        } else {
+            cb(null, file);
+        }
+    }));
+});
+
+gulp.task('lint', ['lint:swagger', 'lint:jslint', 'lint:jsonlint', 'lint:collections']);
 gulp.task('tests', ['rest:tests', 'unit:tests']);
 
 gulp.task('unit:tests', () => {
@@ -116,6 +132,6 @@ gulp.task('rest:tests', () => {
     });
 });
 
-gulp.task('default', ['swagger', 'lint:swagger', 'lint:jslint', 'lint:jsonlint'], done => {
+gulp.task('default', ['swagger', 'lint'], done => {
     runSequence('tests', done);
 });
