@@ -46,10 +46,14 @@ exports.execute = (collection, options) => {
         options.envJson.values.forEach(value => {
             url = url.replace(new RegExp(`{{${value.key}}}`, 'g'), value.value);
         });
+        let headers = {};
+        req.header.forEach(header => {
+            headers[header.key] = header.value;
+        });
         let r = {
             uri: url,
             method: req.method,
-            headers: req.headers
+            headers: headers
         };
         request(r, (error, response, body) => {
             if(error) {
