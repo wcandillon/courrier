@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "secxbrl-documentation-examples copy",
-		"_postman_id": "1f088769-eda7-ed02-a43d-816ac4bbcdf4",
+		"_postman_id": "380dbafe-739b-4930-0cb1-40cbccfdb03f",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -19,7 +19,7 @@
 				}
 			],
 			"request": {
-				"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=html&token={{token}}&format-indent=yes",
+				"url": "{{endpoint}}/_queries/public/api/archives?aid=0001193125-15-267714&format=html&token={{token}}&format-indent=yes",
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -42,7 +42,7 @@
 				}
 			],
 			"request": {
-				"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=csv&token={{token}}&format-indent=yes",
+				"url": "{{endpoint}}/_queries/public/api/archives?aid=0001193125-15-267714&format=csv&token={{token}}&format-indent=yes",
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -65,7 +65,7 @@
 				}
 			],
 			"request": {
-				"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&format=xml&token={{token}}&format-indent=yes",
+				"url": "{{endpoint}}/_queries/public/api/archives?aid=0001193125-15-267714&format=xml&token={{token}}&format-indent=yes",
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -88,9 +88,38 @@
 				}
 			],
 			"request": {
-				"url": "{{endpoint}}/_queries/public/api/filings?aid=0001193125-15-267714&token={{token}}&format-indent=yes",
+				"url": "{{endpoint}}/_queries/public/api/archives?aid=0001193125-15-267714&token={{token}}&format-indent=yes",
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Docs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "tests[\"Status code is 200\"] = responseCode.code === 200;\nvar body = JSON.parse(responseBody);\ntests[\"Returns swagger file\"] = body.swagger === \"2.0\";"
+					}
+				}
+			],
+			"request": {
+				"url": "{{endpoint}}/_queries/public/api/docs",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+						"description": ""
+					}
+				],
 				"body": {
 					"mode": "formdata",
 					"formdata": []
