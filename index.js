@@ -94,7 +94,7 @@ exports.execute = (collection, options) => {
                         xw.text(_.isString(body) ? body : JSON.stringify(body, null, 2));
                         xw.text('\n\n======\n\n');
                         xw.text('Test cases:');
-                        xw.text(req.tests);
+                        xw.text(item.event[0].script.exec);
                         xw.endCData();
                         xw.endElement();
                     });
