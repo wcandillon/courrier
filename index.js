@@ -24,7 +24,8 @@ var runTests = (response, tests) => {
             },
             responseCode: {
                 code: response.statusCode
-            }
+            },
+            responseBody: response.body
     };
     let context = new vm.createContext(sandbox);
     tests.forEach(test => {
