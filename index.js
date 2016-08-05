@@ -54,7 +54,7 @@ exports.execute = (collection, options) => {
             uri: url,
             method: req.method,
             headers: headers,
-            body: (req.body.raw && req.body.raw !== "") ? req.body.raw : undefined
+            body: (req.body && req.body.raw && req.body.raw !== "") ? req.body.raw : undefined
         };
         request(r, (error, response, body) => {
             if(error) {
