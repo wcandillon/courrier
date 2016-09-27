@@ -120,9 +120,9 @@ exports.execute = (collection, options) => {
             return defered.promise;
     });
     return (
-        options.parallel ?
-            Q.allSettled(promises.map(p => p())) :
-            promises.reduce((p, n) => p.then(() => n()), Q.resolve())
+        options.sequential ?
+            promises.reduce((p, n) => p.then(() => n()), Q.resolve()) :
+            Q.allSettled(promises.map(p => p()))
     ).then(promises => {
         xw.endDocument();
         fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
