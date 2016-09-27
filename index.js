@@ -118,7 +118,7 @@ exports.execute = (collection, options) => {
         });
         return defered.promise;
     });
-    return Q.allSettled(promises).then(promises => {
+    return (options.parallel ? Q.allSettled(promises) : promises.reduce(Q.when, Q())).then(promises => {
         xw.endDocument();
         fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
         console.log(`Wrote ${options.testReportFile}`);
