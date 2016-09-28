@@ -123,11 +123,20 @@ exports.execute = (collection, options) => {
         options.sequential ?
             promises.reduce((p, n) => p.then(() => n()), Q.resolve()) :
             Q.allSettled(promises.map(p => p()))
-    ).then(promises => {
+    )
+    .catch(() => {
+        //Failure in the sequential mode
         xw.endDocument();
         fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
         console.log(`Wrote ${options.testReportFile}`);
-        if(_.find(promises, promise => promise.state === 'rejected')) {
+        throw new Error('Test Failed');
+    })
+    .then(promises => {
+        //Failure in the parallel mode
+        xw.endDocument();
+        fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
+        console.log(`Wrote ${options.testReportFile}`);
+        if(promises && _.find(promises, promise => promise.state === 'rejected')) {
             throw new Error('Test Failed');
         }
     });
