@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "req",
+			"name": "req 1",
 			"event": [
 				{
 					"listen": "test",
@@ -37,7 +37,7 @@
 					"listen": "test",
 					"script": {
 						"type": "text/javascript",
-						"exec": "tests[\"hello world\"] = postman.getGlobalVariable(\"hello\") === \"world\";\nvar json = JSON.parse(responseBody);\ntests[\"contains foo\"] = json.args.token === \"foo\";"
+						"exec": "tests[\"hello world\"] = postman.getGlobalVariable(\"hello\") === \"world\";\nvar json = JSON.parse(responseBody);\ntests[\"contains foo\"] = json.args.token === \"foo\";\ntests[\"_ is defined\"] = _.isObject(_);"
 					}
 				}
 			],
