@@ -1,0 +1,57 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Courrier Test",
+		"_postman_id": "7792a848-5d1a-aebc-5323-5cd92db3487e",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "req",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "postman.setGlobalVariable(\"hello\", \"world\");\npostman.setEnvironmentVariable(\"token\", \"foo\");"
+					}
+				}
+			],
+			"request": {
+				"url": "http://scooterlabs.com/echo",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "req 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "tests[\"hello world\"] = postman.getGlobalVariable(\"hello\") === \"world\";\ntests[\"contains foo\"] = _.includes(responseBody, \"=> foo\");"
+					}
+				}
+			],
+			"request": {
+				"url": "http://scooterlabs.com/echo?token={{token}}",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -1,14 +1,15 @@
 'use strict';
 
-var fs = require('fs');
-var _ = require('lodash');
-var Q = require('q');
-var request = require('request');
+const fs = require('fs');
+const _ = require('lodash');
+const Q = require('q');
+const request = require('request');
 
 const vm = require('vm');
-var XMLWriter = require('xml-writer');
-var colors = require('colors/safe');
-var printStatusCode = status => {
+const XMLWriter = require('xml-writer');
+const colors = require('colors/safe');
+
+const printStatusCode = status => {
     if(status >= 200 && status <= 300) {
         return colors.green(status);
     } else {
@@ -16,13 +17,16 @@ var printStatusCode = status => {
     }
 };
 
-var runTests = (response, tests, globalVars) => {
+var runTests = (response, tests, globalVars, env) => {
     let sandbox = {
             tests: {},
+            _ : _,
             postman: {
                 getResponseHeader: header => response.headers[header.toLowerCase()],
                 setGlobalVariable: (key, value) => globalVars[key] = value,
-                getGlobalVariable: value => globalVars[key]
+                getGlobalVariable: key => globalVars[key],
+                getEnvironmentVariable: key => env[key],
+                setEnvironmentVariable: (key, value) => env[key] = value,
             },
             responseCode: {
                 code: response.statusCode
@@ -39,6 +43,10 @@ var runTests = (response, tests, globalVars) => {
 
 exports.execute = (collection, options) => {
     let globalVars = {};
+    let env = {};
+    options.envJson.values.forEach(value => {
+        env[value.key] = value.value;
+    });
     let xw = new XMLWriter(true);
     xw.startDocument();
     xw.startElement('testsuites');
@@ -47,8 +55,8 @@ exports.execute = (collection, options) => {
             let req = item.request;
             let defered = Q.defer();
             let url = req.url;
-            options.envJson.values.forEach(value => {
-                url = url.replace(new RegExp(`{{${value.key}}}`, 'g'), value.value);
+            _.forEach(env, (value, key) => {
+                url = url.replace(new RegExp(`{{${key}}}`, 'g'), value);
             });
             let headers = {};
             req.header.forEach(header => {
@@ -66,7 +74,7 @@ exports.execute = (collection, options) => {
                     defered.reject(error);
                 } else {
                     console.log(`${printStatusCode(response.statusCode)} ${item.name} ${colors.cyan(`[${req.method}]`)} ${url}`);
-                    let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'), globalVars);
+        let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'), globalVars, env);
                     let tests = 0;
                     let failures = 0;
                     let cases = [];
