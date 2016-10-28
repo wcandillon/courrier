@@ -16,11 +16,13 @@ var printStatusCode = status => {
     }
 };
 
-var runTests = (response, tests) => {
+var runTests = (response, tests, globalVars) => {
     let sandbox = {
             tests: {},
             postman: {
-                getResponseHeader: header => response.headers[header.toLowerCase()]
+                getResponseHeader: header => response.headers[header.toLowerCase()],
+                setGlobalVariable: (key, value) => globalVars[key] = value,
+                getGlobalVariable: value => globalVars[key]
             },
             responseCode: {
                 code: response.statusCode
@@ -36,6 +38,7 @@ var runTests = (response, tests) => {
 };
 
 exports.execute = (collection, options) => {
+    let globalVars = {};
     let xw = new XMLWriter(true);
     xw.startDocument();
     xw.startElement('testsuites');
@@ -63,7 +66,7 @@ exports.execute = (collection, options) => {
                     defered.reject(error);
                 } else {
                     console.log(`${printStatusCode(response.statusCode)} ${item.name} ${colors.cyan(`[${req.method}]`)} ${url}`);
-                    let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'));
+                    let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'), globalVars);
                     let tests = 0;
                     let failures = 0;
                     let cases = [];
