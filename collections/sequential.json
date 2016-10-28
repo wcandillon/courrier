@@ -19,7 +19,7 @@
 				}
 			],
 			"request": {
-				"url": "http://scooterlabs.com/echo",
+				"url": "https://httpbin.org/get",
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -37,12 +37,12 @@
 					"listen": "test",
 					"script": {
 						"type": "text/javascript",
-						"exec": "tests[\"hello world\"] = postman.getGlobalVariable(\"hello\") === \"world\";\ntests[\"contains foo\"] = _.includes(responseBody, \"=> foo\");"
+						"exec": "tests[\"hello world\"] = postman.getGlobalVariable(\"hello\") === \"world\";\nvar json = JSON.parse(responseBody);\ntests[\"contains foo\"] = json.args.token === \"foo\";"
 					}
 				}
 			],
 			"request": {
-				"url": "http://scooterlabs.com/echo?token={{token}}",
+				"url": "https://httpbin.org/get?token={{token}}",
 				"method": "GET",
 				"header": [],
 				"body": {
