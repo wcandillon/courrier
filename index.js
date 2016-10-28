@@ -130,8 +130,9 @@ exports.execute = (collection, options) => {
             });
             return defered.promise;
     });
+    let sequential = collection.item.reduce((result, item) => { return result === true || item.request.method.toUpperCase() !== 'GET'; } , false);
     return (
-        options.sequential ?
+        sequential ?
             promises.reduce((p, n) => p.then(() => n()), Q.resolve()) :
             Q.allSettled(promises.map(p => p()))
     )
