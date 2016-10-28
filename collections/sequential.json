@@ -19,8 +19,8 @@
 				}
 			],
 			"request": {
-				"url": "https://httpbin.org/get",
-				"method": "GET",
+				"url": "https://httpbin.org/post",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "formdata",

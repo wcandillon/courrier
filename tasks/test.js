@@ -46,7 +46,6 @@ gulp.task('rest:tests', () => {
     const collections = ['collections/documentation-examples.json', 'collections/sequential.json'];
     let promises = [];
     collections.forEach(collection => {
-        options.sequential = true;
         options.testReportFile = `${testReports}/${path.basename(collection)}.xml`;
         promises.push(courrier.execute(JSON.parse(fs.readFileSync(collection)), options));
     });
