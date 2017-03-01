@@ -12,6 +12,7 @@ const courrier = require('courrier');
 const options = {
     envJson: {
         id:'7a04c166-1f65-509b-0d3d-7463182e17c9',
+        sequential: true, //sequential execution
         name:'CellStore',
         values: [{
             key: 'endpoint',
