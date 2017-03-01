@@ -1,14 +1,15 @@
 'use strict';
 
-var fs = require('fs');
-var _ = require('lodash');
-var Q = require('q');
-var request = require('request');
+const fs = require('fs');
+const _ = require('lodash');
+const Q = require('q');
+const request = require('request');
 
 const vm = require('vm');
-var XMLWriter = require('xml-writer');
-var colors = require('colors/safe');
-var printStatusCode = status => {
+const XMLWriter = require('xml-writer');
+const colors = require('colors/safe');
+
+const printStatusCode = status => {
     if(status >= 200 && status <= 300) {
         return colors.green(status);
     } else {
@@ -16,11 +17,16 @@ var printStatusCode = status => {
     }
 };
 
-var runTests = (response, tests) => {
+var runTests = (response, tests, globalVars, env) => {
     let sandbox = {
             tests: {},
+            _ : _,
             postman: {
-                getResponseHeader: header => response.headers[header.toLowerCase()]
+                getResponseHeader: header => response.headers[header.toLowerCase()],
+                setGlobalVariable: (key, value) => globalVars[key] = value,
+                getGlobalVariable: key => globalVars[key],
+                getEnvironmentVariable: key => env[key],
+                setEnvironmentVariable: (key, value) => env[key] = value,
             },
             responseCode: {
                 code: response.statusCode
@@ -30,12 +36,21 @@ var runTests = (response, tests) => {
     let context = new vm.createContext(sandbox);
     tests.forEach(test => {
         let script = new vm.Script(test.script.exec);
-        script.runInContext(context);
+        try {
+            script.runInContext(context);
+        } catch(e) {
+            tests['Script execute without throwing an exception'] = false;   
+        }
     });
     return sandbox.tests;
 };
 
 exports.execute = (collection, options) => {
+    let globalVars = {};
+    let env = {};
+    options.envJson.values.forEach(value => {
+        env[value.key] = value.value;
+    });
     let xw = new XMLWriter(true);
     xw.startDocument();
     xw.startElement('testsuites');
@@ -44,8 +59,8 @@ exports.execute = (collection, options) => {
             let req = item.request;
             let defered = Q.defer();
             let url = req.url;
-            options.envJson.values.forEach(value => {
-                url = url.replace(new RegExp(`{{${value.key}}}`, 'g'), value.value);
+            _.forEach(env, (value, key) => {
+                url = url.replace(new RegExp(`{{${key}}}`, 'g'), value);
             });
             let headers = {};
             req.header.forEach(header => {
@@ -63,7 +78,7 @@ exports.execute = (collection, options) => {
                     defered.reject(error);
                 } else {
                     console.log(`${printStatusCode(response.statusCode)} ${item.name} ${colors.cyan(`[${req.method}]`)} ${url}`);
-                    let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'));
+        let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'), globalVars, env);
                     let tests = 0;
                     let failures = 0;
                     let cases = [];
@@ -119,15 +134,25 @@ exports.execute = (collection, options) => {
             });
             return defered.promise;
     });
+    let sequential = collection.item.reduce((result, item) => { return result === true || item.request.method.toUpperCase() !== 'GET'; } , false);
     return (
-        options.sequential ?
+        sequential ?
             promises.reduce((p, n) => p.then(() => n()), Q.resolve()) :
             Q.allSettled(promises.map(p => p()))
-    ).then(promises => {
+    )
+    .catch(() => {
+        //Failure in the sequential mode
         xw.endDocument();
         fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
         console.log(`Wrote ${options.testReportFile}`);
-        if(_.find(promises, promise => promise.state === 'rejected')) {
+        throw new Error('Test Failed');
+    })
+    .then(promises => {
+        //Failure in the parallel mode
+        xw.endDocument();
+        fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
+        console.log(`Wrote ${options.testReportFile}`);
+        if(promises && _.find(promises, promise => promise.state === 'rejected')) {
             throw new Error('Test Failed');
         }
     });

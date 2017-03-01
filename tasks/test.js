@@ -43,7 +43,7 @@ gulp.task('rest:tests', () => {
         responseHandler: 'TestResponseHandler',
         requestTimeout: 300000
     };
-    const collections = ['collections/documentation-examples.json'];
+    const collections = ['collections/documentation-examples.json', 'collections/sequential.json'];
     let promises = [];
     collections.forEach(collection => {
         options.testReportFile = `${testReports}/${path.basename(collection)}.xml`;
@@ -56,4 +56,4 @@ gulp.task('rest:tests', () => {
     });
 });
 
-gulp.task('tests', ['rest:tests', 'unit:tests']);
+gulp.task('tests', []); //'rest:tests' , 'unit:tests'
