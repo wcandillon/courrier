@@ -36,7 +36,11 @@ var runTests = (response, tests, globalVars, env) => {
     let context = new vm.createContext(sandbox);
     tests.forEach(test => {
         let script = new vm.Script(test.script.exec);
-        script.runInContext(context);
+        try {
+            script.runInContext(context);
+        } catch(e) {
+            tests['Script execute without throwing an exception'] = false;   
+        }
     });
     return sandbox.tests;
 };
