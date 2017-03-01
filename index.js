@@ -39,7 +39,7 @@ var runTests = (response, tests, globalVars, env) => {
         try {
             script.runInContext(context);
         } catch(e) {
-            tests["Script execute without throwing an exception"] = false;   
+            tests['Script execute without throwing an exception'] = false;   
         }
     });
     return sandbox.tests;
