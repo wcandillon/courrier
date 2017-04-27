@@ -2,8 +2,9 @@
 
 const fs = require('fs');
 const _ = require('lodash');
-const Q = require('q');
-const request = require('request');
+const request = require('sync-request');
+const t = require('exectimer');
+const Tick = t.Tick;
 
 const vm = require('vm');
 const XMLWriter = require('xml-writer');
@@ -39,121 +40,169 @@ var runTests = (response, tests, globalVars, env) => {
         try {
             script.runInContext(context);
         } catch(e) {
-            tests['Script execute without throwing an exception'] = false;   
+            tests['Script execute without throwing an exception'] = false;
         }
     });
     return sandbox.tests;
 };
 
-exports.execute = (collection, options) => {
-    let globalVars = {};
-    let env = {};
-    options.envJson.values.forEach(value => {
-        env[value.key] = value.value;
-    });
-    let xw = new XMLWriter(true);
-    xw.startDocument();
-    xw.startElement('testsuites');
-    let promises = collection.item.map(item =>
-        () => {
-            let req = item.request;
-            let defered = Q.defer();
-            let url = req.url;
-            _.forEach(env, (value, key) => {
-                url = url.replace(new RegExp(`{{${key}}}`, 'g'), value);
-            });
-            let headers = {};
-            req.header.forEach(header => {
-                headers[header.key] = header.value;
-            });
-            let r = {
-                uri: url,
-                method: req.method,
-                headers: headers,
-                body: (req.body && req.body.raw && req.body.raw !== '') ? req.body.raw : undefined
-            };
-            request(r, (error, response, body) => {
-                if (error) {
-                    console.log(colors.red(error));
-                    defered.reject(error);
-                } else {
-                    console.log(`${printStatusCode(response.statusCode)} ${item.name} ${colors.cyan(`[${req.method}]`)} ${url}`);
-        let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'), globalVars, env);
-                    let tests = 0;
-                    let failures = 0;
-                    let cases = [];
-                    _.forEach(results, (value, key) => {
-                        tests++;
-                        cases.push({name: key, failures: []});
-                        if (value) {
-                            console.log(colors.green(`✓ ${key}`));
-                        } else {
-                            console.log(colors.red(`✗ ${key}`));
-                            failures++;
-                            cases[cases.length - 1].failures.push({name: key});
-                        }
-                    });
-
-                    xw.startElement('testsuite');
-                    xw.writeAttribute('name', req.name);
-                    xw.writeAttribute('id', req.id);
-                    xw.writeAttribute('timestamp', (new Date()).toString());
-                    xw.writeAttribute('tests', tests);
-                    xw.writeAttribute('failures', failures);
-                    cases.forEach(c => {
-                        xw.startElement('testcase');
-                        xw.writeAttribute('name', c.name);
-                        c.failures.forEach(failure => {
-                            xw.startElement('failure');
-                            xw.writeAttribute('name', failure.name);
-                            xw.startCData();
-                            xw.text('Request:\n');
-                            xw.text(JSON.stringify(r, null, 2));
-                            xw.text('\n\n======\nResponse headers\n\n');
-                            xw.text(JSON.stringify(response.headers, null, 2));
-                            xw.text('\n\n======\nResponse body\n\n');
-                            xw.text(_.isString(body) ? body : JSON.stringify(body, null, 2));
-                            xw.text('\n\n======\n\n');
-                            xw.text('Test cases:');
-                            xw.text(item.event[0].script.exec);
-                            xw.endCData();
-                            xw.endElement();
-                        });
-                        xw.endElement();
-                    });
-                    xw.endElement();
-                    if (failures > 0) {
-                        defered.reject(new Error('Test failed'));
-                    } else {
-                        defered.resolve({
-                            response: response,
-                            body: body
-                        });
-                    }
-                }
-            });
-            return defered.promise;
-    });
-    let sequential = collection.item.reduce((result, item) => { return result === true || item.request.method.toUpperCase() !== 'GET'; } , false);
-    return (
-        sequential ?
-            promises.reduce((p, n) => p.then(() => n()), Q.resolve()) :
-            Q.allSettled(promises.map(p => p()))
-    )
-    .catch(() => {
-        //Failure in the sequential mode
-        xw.endDocument();
-        fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
-        console.log(`Wrote ${options.testReportFile}`);
-        throw new Error('Test Failed');
-    })
-    .then(promises => {
-        //Failure in the parallel mode
-        xw.endDocument();
-        fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
-        console.log(`Wrote ${options.testReportFile}`);
-        if(promises && _.find(promises, promise => promise.state === 'rejected')) {
-            throw new Error('Test Failed');
+var runTest = (method, url, options, testRequest, item, globalVars, env, xw) => {
+  console.log(`Start request ${colors.cyan(`[${method}]`)} ${url}`);
+  var tick = new Tick('testRequest');
+  try
+  {
+    tick.start();
+    var response = request(method, url, options);
+    tick.stop();
+    console.log(`Got response, status: ${printStatusCode(response.statusCode)}, elapsed time ${Math.round(tick.getDiff()/1000/1000)}ms`);
+    console.log('Running tests:');
+    let results = runTests(response, item.event.filter(event => event.listen === 'test' && event.script.type === 'text/javascript'), globalVars, env);
+    let tests = 0;
+    let failures = 0;
+    let cases = [];
+    _.forEach(results, (value, key) => {
+        tests++;
+        cases.push({name: key, failures: []});
+        if (value) {
+            console.log(colors.green(`✓ ${key}`));
+        } else {
+            console.log(colors.red(`✗ ${key}`));
+            failures++;
+            cases[cases.length - 1].failures.push({name: key});
         }
     });
+    if (failures > 0)
+    {
+      console.log(colors.red(`${failures}/${tests} tests failed`));
+      console.log('\n\n======\nResponse headers\n\n');
+      console.log(JSON.stringify(response.headers, null, 2));
+      console.log('\n\n======\nResponse body\n\n');
+      console.log(_.isString(response.body) ? response.body : response.body.toString());
+    }
+    else
+    {
+      console.log(colors.green(`${tests}/${tests} tests passed`));
+    }
+
+    xw.startElement('testsuite');
+    xw.writeAttribute('name', testRequest.name);
+    xw.writeAttribute('id', testRequest.id);
+    xw.writeAttribute('timestamp', (new Date()).toString());
+    xw.writeAttribute('tests', tests);
+    xw.writeAttribute('failures', failures);
+    cases.forEach(c => {
+        xw.startElement('testcase');
+        xw.writeAttribute('name', c.name);
+        c.failures.forEach(failure => {
+            xw.startElement('failure');
+            xw.writeAttribute('name', failure.name);
+            xw.startCData();
+            xw.text('Request:\n');
+            xw.text(method + '' + url);
+            xw.text(JSON.stringify(options, null, 2));
+            xw.text('\n\n======\nResponse headers\n\n');
+            xw.text(JSON.stringify(response.headers, null, 2));
+            xw.text('\n\n======\nResponse body\n\n');
+            xw.text(_.isString(response.body) ? response.body : response.body.toString());
+            xw.text('\n\n======\n\n');
+            xw.text('Test cases:');
+            xw.text(item.event[0].script.exec);
+            xw.endCData();
+            xw.endElement();
+        });
+        xw.endElement();
+    });
+    xw.endElement();
+
+    if (failures > 0) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+  catch (httpError)
+  {
+    tick.stop();
+    console.log(colors.red(httpError));
+
+    xw.startElement('testsuite');
+    xw.writeAttribute('name', testRequest.name);
+    xw.writeAttribute('id', testRequest.id);
+    xw.writeAttribute('timestamp', (new Date()).toString());
+    xw.writeAttribute('tests', 1);
+    xw.writeAttribute('failures', 1);
+      xw.startElement('testcase');
+      xw.writeAttribute('name', 'response');
+        xw.startElement('failure');
+        xw.writeAttribute('name', 'HTTPError');
+        xw.startCData();
+        xw.text('Request:\n');
+        xw.text(method + '' + url);
+        xw.text(JSON.stringify(options, null, 2));
+        xw.text('\n\n======\n\n');
+        xw.text('Error:');
+        xw.text(httpError.toString());
+        xw.endCData();
+        xw.endElement();
+     xw.endElement();
+    xw.endElement();
+
+    return 1;
+  }
+};
+
+exports.execute = (collection, options) => {
+  let globalVars = {};
+  let env = {};
+  options.envJson.values.forEach(value => {
+      env[value.key] = value.value;
+  });
+
+  let xw = new XMLWriter(true);
+  xw.startDocument();
+  xw.startElement('testsuites');
+  let failures = 0;
+  collection.item.forEach(item => {
+    console.log('[START] ' + item.name);
+    let testRequest = item.request;
+    let url = testRequest.url;
+    _.forEach(env, (value, key) => {
+        url = url.replace(new RegExp(`{{${key}}}`, 'g'), value);
+    });
+    let headers = {};
+    testRequest.header.forEach(header => {
+        headers[header.key] = header.value;
+    });
+    let options = {
+        headers: headers,
+        body: (testRequest.body && testRequest.body.raw && testRequest.body.raw !== '') ? testRequest.body.raw : undefined,
+        timeout: 90000,
+        socketTimeout: 90000
+    };
+    let method = testRequest.method;
+    failures += runTest(method, url, options, testRequest, item, globalVars, env, xw);
+
+    console.log('[ END ] ' + item.name + '\n');
+  });
+  xw.endElement();
+  xw.endDocument();
+  fs.writeFileSync(options.testReportFile, xw.toString(), 'utf-8');
+  console.log(`Wrote ${options.testReportFile}`);
+
+  var results = t.timers.testRequest;
+  console.log('Total duration of all requests: ' + results.parse(results.duration()));
+  console.log('Shortest request: ' + results.parse(results.min()));
+  console.log('Longest request: ' + results.parse(results.max()));
+  console.log('Average request: ' + results.parse(results.mean()));
+  console.log('Median request: ' + results.parse(results.median()));
+
+  if (failures > 0)
+  {
+    console.log(colors.red(`${failures}/${collection.item.length} testsuites failed`));
+    throw new Error(`${failures}/${collection.item.length} testsuites failed`);
+  }
+  else
+  {
+    console.log(colors.green(`${failures}/${collection.item.length} testsuites passed`));
+  }
 };
