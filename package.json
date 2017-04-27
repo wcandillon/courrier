@@ -1,5 +1,6 @@
 {
   "name": "courrier",
+  "version": "2.4.2",
   "description": "Postman runner that can run requests in parallel",
   "main": "index.js",
   "scripts": {
@@ -8,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wcandillon/courrier.git"
+    "url": "https://github.com/reportix/courrier.git"
   },
   "keywords": [
     "postman",
@@ -18,14 +19,15 @@
   "author": "William Candillon <w@28.io>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/wcandillon/courrier/issues"
+    "url": "https://github.com/reportix/courrier/issues"
   },
-  "homepage": "https://github.com/wcandillon/courrier#readme",
+  "homepage": "https://github.com/reportix/courrier#readme",
   "dependencies": {
     "colors": "^1.1.2",
+    "exectimer": "^2.0.3",
     "lodash": "^4.6.1",
     "q": "^1.4.1",
-    "request": "^2.69.0",
+    "sync-request": "^4.0.3",
     "xml-writer": "^1.6.0"
   },
   "devDependencies": {
