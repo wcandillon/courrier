@@ -114,7 +114,11 @@ var runTest = (method, url, options, testRequest, item, globalVars, env, xw) => 
     });
     xw.endElement();
 
-    return 0;
+    if (failures > 0) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
   catch (httpError)
   {
